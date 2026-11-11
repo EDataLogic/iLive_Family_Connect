@@ -1,0 +1,135 @@
+{
+  "viewer": {
+    "id": "gd_shalin",
+    "name": "Shalin Khanna",
+    "relation": "son",
+    "patientCalled": "Dad"
+  },
+  "patient": {
+    "id": "pt_8f21",
+    "name": "Prem Kumar Khanna",
+    "sex": "male",
+    "monitoringDay": 141,
+    "programme": "Preventive Care",
+    "tags": [
+      "Medical Management",
+      "Diabetes"
+    ],
+    "phone": "+91XXXXXXXXXX"
+  },
+  "familyCircle": [
+    {
+      "id": "gd_shalin",
+      "name": "Shalin Khanna",
+      "relation": "son",
+      "isViewer": true,
+      "lastActiveAt": "2026-11-08T16:30:00+05:30",
+      "summaryReadAt": null
+    },
+    {
+      "id": "gd_arun",
+      "name": "Arun Khanna",
+      "relation": "son",
+      "isViewer": false,
+      "lastActiveAt": "2026-11-08T09:14:00+05:30",
+      "summaryReadAt": "2026-11-08T09:14:00+05:30",
+      "phone": "+91XXXXXXXXXX"
+    }
+  ],
+  "monitoring": {
+    "state": "active"
+  },
+  "syncedAt": "2026-11-08T13:10:00+05:30",
+  "vitals": [
+    {
+      "metric": "heart_rate",
+      "value": 100,
+      "unit": "bpm",
+      "recordedAt": "2026-11-08T13:10:00+05:30",
+      "status": "alert",
+      "statusLabel": "Elevated",
+      "staleAfterHours": 2
+    },
+    {
+      "metric": "blood_pressure",
+      "value": {
+        "sys": 118,
+        "dia": 74
+      },
+      "unit": "mmHg",
+      "recordedAt": "2026-10-27T11:36:00+05:30",
+      "status": "normal",
+      "statusLabel": null,
+      "staleAfterHours": 72
+    },
+    {
+      "metric": "hrv",
+      "value": 41.7,
+      "unit": "ms",
+      "recordedAt": "2026-11-08T13:06:00+05:30",
+      "status": "none",
+      "statusLabel": null,
+      "staleAfterHours": 2
+    },
+    {
+      "metric": "steps",
+      "value": 2083,
+      "unit": "steps",
+      "recordedAt": "2026-11-08T13:10:00+05:30",
+      "status": "none",
+      "statusLabel": null,
+      "staleAfterHours": 2
+    },
+    {
+      "metric": "sleep",
+      "value": 305,
+      "unit": "min",
+      "recordedAt": "2026-11-08T20:55:00+05:30",
+      "status": "watch",
+      "statusLabel": "Below goal",
+      "staleAfterHours": 36
+    },
+    {
+      "metric": "glucose",
+      "value": 144,
+      "unit": "mg/dL",
+      "recordedAt": "2026-11-07T10:50:00+05:30",
+      "status": "watch",
+      "statusLabel": "Above target",
+      "staleAfterHours": 24
+    }
+  ],
+  "morningSummary": {
+    "id": "ms_20261108",
+    "generatedAt": "2026-11-08T09:00:00+05:30",
+    "reviewedBy": "dr_xxx",
+    "unread": true
+  },
+  "interactions": [
+    {
+      "role": "doctor",
+      "title": "iLive Doctor",
+      "lastCallAt": "2026-11-03T19:22:00+05:30",
+      "hasNotes": true
+    },
+    {
+      "role": "physio",
+      "title": "iLive Physiotherapist",
+      "lastCallAt": "2026-11-02T16:15:00+05:30",
+      "hasNotes": true
+    },
+    {
+      "role": "nutrition",
+      "title": "iLive Clinical Nutritionist",
+      "lastCallAt": "2026-11-02T11:30:00+05:30",
+      "hasNotes": true
+    },
+    {
+      "role": "care_team",
+      "title": "iLive Care Team",
+      "lastCallAt": null,
+      "continuous": true,
+      "hasNotes": true
+    }
+  ]
+}

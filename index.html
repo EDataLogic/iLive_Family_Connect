@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B1D3A">
+<title>iLive Family Connect — Guardian App Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+<style>
+/* ============ DESIGN TOKENS (mirror tokens.json) ============ */
+:root{
+  --navy:#0B1D3A; --gold:#D9B871; --bg:#F2F4F8; --card:#FFFFFF; --border:#E4E9F1; --divider:#EEF1F6;
+  --text:#0B1D3A; --text2:#46526A; --muted:#5F6B80; --body:#26324A;
+  --blue:#2563EB; --link:#1D4ED8; --violet:#5B48D6;
+  --alert:#D92D20; --alert-fg:#B42318; --alert-bg:#FDECEC;
+  --watch:#E08A00; --watch-fg:#8A4B00; --watch-bg:#FEF1DC;
+  --ok:#16A34A; --ok-fg:#11703A; --ok-bg:#E3F5EA;
+  --stale-fg:#4B5568; --stale-bg:#EDF0F5;
+  --r-card:18px; --r-lg:20px; --r-cta:18px;
+  --shadow:0 6px 20px rgba(11,29,58,.06);
+  --display:'Plus Jakarta Sans',Inter,system-ui,sans-serif;
+  --sans:Inter,system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#DDE2EA;font-family:var(--sans);color:var(--text);-webkit-font-smoothing:antialiased}
+button{font-family:inherit;color:inherit}
+a{color:var(--link)}
+.app{max-width:430px;min-height:100vh;margin:0 auto;background:var(--bg);position:relative;overflow-x:hidden}
+@media(min-width:600px){.app{margin:24px auto;min-height:calc(100vh - 48px);border-radius:36px;box-shadow:0 30px 80px rgba(11,29,58,.25);overflow:hidden}}
+.screen{padding-bottom:110px}
+.hdr{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 22px) 22px 28px;border-radius:0 0 30px 30px;position:relative;overflow:hidden}
+.hdr .wave{position:absolute;right:0;bottom:0;pointer-events:none}
+.row{display:flex;align-items:center}
+.between{justify-content:space-between}
+.logo{display:flex;align-items:center;gap:6px}
+.logo span{font-family:'Playfair Display',Georgia,serif;font-size:30px;font-weight:500;letter-spacing:-.5px;line-height:1}
+.badge-gold{font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:4px 9px}
+.iconbtn{width:44px;height:44px;border:0;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:14px}
+.iconbtn.box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22)}
+.appname{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.2px;color:#fff;margin-top:10px}
+.h1{margin:12px 0 0;font-family:var(--display);font-size:26px;line-height:1.18;font-weight:800;letter-spacing:-.4px}
+.pname{font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:-.3px}
+.pmeta{font-size:13.5px;color:#B9C5DB;margin-top:4px}
+.callbox{width:54px;height:54px;flex:0 0 54px;border-radius:16px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.tag{font-size:13px;font-weight:600;padding:6px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08)}
+.main{padding:16px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.tile{border-radius:16px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.t17{font-family:var(--display);font-size:17px;font-weight:800}
+.sub{font-size:13.5px;line-height:1.35;color:#556178}
+.label{margin:0;font-size:12.5px;font-weight:700;letter-spacing:.1em;color:var(--text2)}
+.chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.chip.alert{color:var(--alert-fg);background:var(--alert-bg)}
+.chip.watch{color:var(--watch-fg);background:var(--watch-bg)}
+.chip.normal{color:var(--ok-fg);background:var(--ok-bg)}
+.chip.stale{color:var(--stale-fg);background:var(--stale-bg)}
+.chip.lg{font-size:12px;padding:5px 10px}
+.active{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--ok-fg);background:var(--ok-bg);padding:7px 12px;border-radius:999px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(22,163,74,.18)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.vital{background:#fff;border:1px solid var(--border);border-radius:var(--r-card);padding:13px 14px;display:flex;flex-direction:column;gap:6px;box-shadow:0 4px 14px rgba(11,29,58,.05);min-height:98px;cursor:pointer;text-align:left;width:100%}
+.vital:active,.press:active{transform:scale(.98)}
+.vlabel{font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--text2)}
+.vval{font-family:var(--display);font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.05}
+.vunit{font-size:13.5px;font-weight:500;color:#556178}
+.vtime{font-size:12px;color:var(--muted);white-space:nowrap}
+.trends{border:1.5px dashed #BFD0EE;background:#F7FAFF;color:var(--link);border-radius:var(--r-card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:13.5px;font-weight:700;cursor:pointer;min-height:98px}
+.summary{background:#F3F1FF;border:1px solid #CFC8F6;border-radius:var(--r-lg);padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:0 6px 20px rgba(91,72,214,.08);text-align:left;width:100%}
+.irow{background:#fff;border:1px solid var(--border);border-radius:var(--r-card);padding:12px 14px;display:flex;align-items:center;gap:12px;min-height:64px;cursor:pointer;text-align:left;width:100%}
+.irow .t{font-size:15.5px;font-weight:700}
+.irow .s{font-size:12.5px;color:var(--muted);margin-top:2px}
+.vn{font-size:13.5px;font-weight:600;color:#3F4A5F;display:flex;align-items:center;gap:2px;white-space:nowrap}
+.bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:12px 16px calc(env(safe-area-inset-bottom) + 16px);background:rgba(242,244,248,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--border);display:grid;grid-template-columns:1.35fr 1fr;gap:10px;z-index:10}
+@media(min-width:600px){.bar{position:sticky;transform:none;left:auto;bottom:0}}
+.cta{height:56px;border-radius:var(--r-cta);display:flex;align-items:center;justify-content:center;gap:10px;font-size:16px;font-weight:700;cursor:pointer;border:0}
+.cta.primary{background:var(--navy);color:#fff;box-shadow:0 10px 22px rgba(11,29,58,.28)}
+.cta.secondary{background:#fff;border:1px solid #D5DCE8;color:var(--navy)}
+.cta.ok{background:var(--ok-bg);color:var(--ok-fg)}
+.sub-hdr{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 18px) 16px 20px;border-radius:0 0 26px 26px;display:flex;flex-direction:column;gap:14px}
+.pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.pill{flex:0 0 auto;height:38px;padding:0 14px;border-radius:999px;font-size:13.5px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.28)}
+.pill.on{background:#fff;color:var(--navy);border-color:#fff}
+.seg{display:grid;gap:4px;background:#EEF1F6;padding:4px;border-radius:12px}
+.seg button{height:36px;border:0;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:var(--text2)}
+.seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(11,29,58,.12)}
+.seg.dark{background:rgba(255,255,255,.08)}
+.seg.dark button{color:#DCE4F2;font-size:12.5px;height:38px}
+.seg.dark button.on{background:#fff;color:var(--navy)}
+.stat{background:#F6F8FB;border-radius:12px;padding:10px}
+.stat b{display:block;font-size:17px}
+.stat span{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.li{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--divider)}
+.sec-h{font-size:11.5px;font-weight:700;letter-spacing:.08em;color:var(--text2)}
+.callscr{background:var(--navy);color:#fff;min-height:100vh;display:flex;flex-direction:column}
+@media(min-width:600px){.callscr{min-height:calc(100vh - 48px)}}
+.who{display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:18px;cursor:pointer;color:#fff;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.18);text-align:left}
+.who.on{background:rgba(255,255,255,.12);border-color:var(--gold)}
+.radio{width:20px;height:20px;flex:0 0 20px;border-radius:50%;border:2px solid rgba(255,255,255,.45)}
+.who.on .radio{border:6px solid var(--gold);background:var(--navy)}
+.mode{height:46px;border-radius:13px;font-size:13.5px;font-weight:700;cursor:pointer;background:#fff;color:#3F4A5F;border:1.5px solid #D5DCE8}
+.mode.on{background:#EAF1FF;color:var(--link);border-color:var(--blue)}
+.drawer-bg{position:fixed;inset:0;background:rgba(11,29,58,.45);z-index:20;display:flex;justify-content:flex-end}
+.drawer{width:300px;max-width:85%;height:100%;background:#fff;padding:calc(env(safe-area-inset-top) + 24px) 20px 24px;display:flex;flex-direction:column;gap:4px}
+.drawer button{height:50px;border:0;background:transparent;text-align:left;font-size:15.5px;font-weight:600;border-bottom:1px solid var(--divider);cursor:pointer}
+.av{width:40px;height:40px;flex:0 0 40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;font-family:var(--display);border:2px solid #fff}
+.stack{display:flex}.stack .av{width:30px;height:30px;flex-basis:30px;font-size:11px;margin-left:-8px}.stack .av:first-child{margin-left:0}
+.hello{display:flex;align-items:center;gap:10px;margin-top:20px;position:relative}
+/* ---- premium polish v0.3 ---- */
+.hero{position:relative;overflow:hidden;width:100%;text-align:left;cursor:pointer;border:1px solid rgba(217,184,113,.45);border-radius:24px;padding:18px;color:#fff;display:flex;flex-direction:column;gap:6px;
+  background:linear-gradient(155deg,#132B52 0%,#0B1D3A 60%,#0A1830 100%);box-shadow:0 18px 40px rgba(11,29,58,.32)}
+.hero-glow{position:absolute;right:-60px;top:-70px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(217,184,113,.28),rgba(217,184,113,0) 70%);pointer-events:none}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;letter-spacing:.16em;color:var(--gold)}
+.new{font-size:10.5px;font-weight:800;letter-spacing:.1em;color:#0B1D3A;background:var(--gold);padding:4px 9px;border-radius:999px}
+.hero-date{font-size:12px;color:#B9C5DB}
+.hero-title{position:relative;font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.3px;line-height:1.2;margin-top:4px}
+.hero-sub{position:relative;font-size:12.5px;color:#B9C5DB}
+.mini-grid{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}
+.mini{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px 8px 9px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.mini-l{display:flex;align-items:center;gap:5px;font-size:10.5px;color:#C7D1E4;white-space:nowrap;overflow:hidden}
+.mini-v{font-family:var(--display);font-size:15px;font-weight:800;white-space:nowrap}
+.sd{display:inline-block;width:7px;height:7px;flex:0 0 auto;border-radius:50%;background:#9AA6BA}
+.sd.alert{background:#F04438}.sd.watch{background:#F5A524}.sd.normal{background:#22C55E}.sd.stale{background:#9AA6BA}.sd.none{background:#22C55E}
+.seal-row{position:relative;display:flex;align-items:center;gap:10px;margin-top:12px}
+.seal{display:flex}
+.read-btn{display:flex;align-items:center;gap:2px;background:var(--gold);color:#0B1D3A;font-size:13px;font-weight:800;padding:8px 8px 8px 12px;border-radius:999px;white-space:nowrap}
+.dhs{position:relative;overflow:hidden;width:100%;margin-top:4px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:14px;padding:16px;border-radius:20px;border:1px solid rgba(217,184,113,.55);
+  background:linear-gradient(150deg,#16305A 0%,#0B1D3A 65%);box-shadow:0 14px 30px rgba(11,29,58,.28)}
+.dhs-seal{position:relative;width:54px;height:54px;flex:0 0 54px;border-radius:16px;background:rgba(217,184,113,.14);border:1px solid rgba(217,184,113,.4);display:flex;align-items:center;justify-content:center}
+.dhs-go{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center}
+.sum-hdr{position:relative;overflow:hidden;color:#fff;padding:calc(env(safe-area-inset-top) + 18px) 16px 18px;border-radius:0 0 30px 30px;background:linear-gradient(160deg,#16305A 0%,#0B1D3A 65%);box-shadow:inset 0 -1px 0 rgba(217,184,113,.4)}
+.review-band{position:relative;display:flex;align-items:center;gap:12px;margin-top:18px;padding:12px 14px;border-radius:16px;background:rgba(217,184,113,.12);border:1px solid rgba(217,184,113,.4)}
+.brief{margin:10px 0 0;font-size:15px;line-height:1.62;color:var(--body)}
+.brief b{color:var(--text)}
+.vrow{display:flex;align-items:center;gap:12px;width:100%;padding:12px 0;border:0;border-top:1px solid var(--divider);background:transparent;cursor:pointer}
+.reassure{border-radius:22px;padding:18px;background:linear-gradient(160deg,#FFFBF2 0%,#FBF3E1 100%);border:1px solid #EAD9AE;box-shadow:0 10px 28px rgba(150,115,40,.10)}
+.sig{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px dashed #DCC48C;font-size:12px;color:#6B5A2E}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;font-weight:600;z-index:30;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.fade{animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.25)}100%{box-shadow:0 0 0 28px rgba(255,255,255,0)}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* =====================================================================
+   iLive Family Connect — Guardian App · Clickable prototype v0.1
+   Vanilla JS, no build step. Hash routes:
+     #home  #vitals/<metric>  #summary  #notes/<role>  #call/<team|parent|sibling>
+   MOCK DATA below mirrors GET /v1/guardian/patients/:id/dashboard
+   (see dashboard.sample.json + HANDOFF.md). Replace with API calls.
+   ===================================================================== */
+
+const DATA = {
+  /* The person being monitored */
+  patient:{ name:'Prem Kumar Khanna', first:'Mr. Khanna', sex:'Male', day:141, programme:'Preventive Care', tags:['Medical Management','Diabetes'] },
+  /* The logged-in subscriber (guardian). relation = how they relate to the patient */
+  viewer:{ name:'Shalin Khanna', first:'Shalin', relation:'Son', initials:'SK', patientCalled:'Dad', patientRelation:'father' },
+  /* Family circle — every linked family member who receives updates (mock statuses) */
+  family:[
+    { name:'Shalin Khanna',    relation:'Son',      initials:'SK', color:'#2563EB', you:true,  status:'Viewing now' },
+    { name:'Arun Khanna',      relation:'Son',      initials:'AK', color:'#0F766E', you:false, status:'Read today’s summary · 9:14 AM' }
+  ],
+  monitoring:{ state:'active' },
+  syncedAt:'01:10 PM',
+  vitals:[
+    { metric:'hr',      short:'Heart rate', label:'HEART RATE',              value:'100',    num:100,  unit:'bpm',         time:'01:10 PM · 08 Nov', status:'alert', chip:'Elevated',     base:84,  amp:10,  lo:60, hi:100, dec:0 },
+    { metric:'bp',      short:'BP',         label:'LAST BLOOD PRESSURE',     value:'118/74', num:118,  unit:'mmHg',        time:'11:36 AM · 27 Oct', status:'stale', chip:'12 days ago',  base:121, amp:6,   lo:90, hi:140, dec:0 },
+    { metric:'hrv',     short:'HRV',        label:'HEART RATE VARIABILITY',  value:'41.7',   num:41.7, unit:'ms',          time:'01:06 PM · 08 Nov', status:'none',  chip:'',             base:44,  amp:6,   lo:null,hi:null,dec:1 },
+    { metric:'steps',   short:'Steps',      label:'STEPS',                   value:'2,083',  num:2083, unit:'today',       time:'01:10 PM · 08 Nov', status:'none',  chip:'',             base:3200,amp:1600,lo:null,hi:null,dec:0 },
+    { metric:'sleep',   short:'Sleep',      label:'SLEEP',                   value:'5h 5m',  num:5.08, unit:'',            time:'08:55 PM · 08 Nov', status:'watch', chip:'Below goal',   base:6.1, amp:0.9, lo:7,  hi:9,   dec:1 },
+    { metric:'glucose', short:'Glucose',    label:'BLOOD GLUCOSE',           value:'144',    num:144,  unit:'mg/dL',       time:'10:50 AM · 07 Nov', status:'watch', chip:'Above target', base:128, amp:18,  lo:70, hi:140, dec:0 }
+  ],
+  interactions:[
+    { role:'doctor',    title:'iLive Doctor',               sub:'Last call: 03 Nov 2026, 07:22 PM' },
+    { role:'physio',    title:'iLive Physiotherapist',      sub:'Last call: 02 Nov 2026, 04:15 PM' },
+    { role:'nutrition', title:'iLive Clinical Nutritionist',sub:'Last call: 02 Nov 2026, 11:30 AM' },
+    { role:'care',      title:'iLive Care Team',            sub:'Continuous monitoring · notes available' }
+  ]
+};
+
+const ROLE = {
+  doctor:   { short:'Doctor',    fg:'#2563EB', bg:'#E8F0FF', initials:'Dr', sections:[['REASON FOR CALL','[Scheduled review / alert follow-up]'],['WHAT WE REVIEWED','[Vitals reviewed, symptoms reported, medication adherence]'],['ADVICE GIVEN','[Plain-language advice for patient and family]'],['MEDICATION CHANGES','[None / changes with dose and start date]'],['NEXT FOLLOW-UP','[Date and time]']] },
+  physio:   { short:'Physio',    fg:'#C26A00', bg:'#FFF2E0', initials:'Pt', sections:[['SESSION FOCUS','[Mobility / strength / breathing exercises]'],['EXERCISE PLAN','[Exercises, sets, duration, frequency]'],['ACTIVITY GOAL','[Daily step or activity goal]'],['NEXT SESSION','[Date and time]']] },
+  nutrition:{ short:'Diet',      fg:'#15803D', bg:'#E4F6EA', initials:'Nu', sections:[['DIET REVIEW','[Summary of recent meals and glucose pattern]'],['MEAL PLAN','[Key changes to the meal plan]'],['TIPS FOR FAMILY','[How family can help at meal times]'],['NEXT REVIEW','[Date and time]']] },
+  care:     { short:'Care team', fg:'#5B48D6', bg:'#EEEAFF', initials:'CT', sections:[['LATEST ALERT','[Alert raised, time, and how it was handled]'],['ESCALATIONS','[None / escalated to iLive Doctor at time]'],['DEVICE STATUS','[Wearable and BP cuff connection, battery]'],['OPEN TASKS','[e.g. BP reading pending]']] }
+};
+
+/* ---------- icons (inline stroke SVG) ---------- */
+const I = {
+  phone:(s=22,fill=false)=>`<svg aria-hidden="true" width="${s}" height="${s}" viewBox="0 0 24 24" ${fill?'fill="currentColor"':'fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"'}><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>`,
+  menu:`<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>`,
+  pulse:`<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 12 6 12 9 5 13 19 16 12 22 12"/></svg>`,
+  chev:(c='currentColor')=>`<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+  back:`<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
+  close:`<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>`,
+  heart:`<svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" style="align-self:center"><path d="M12 21s-7.5-4.6-10-9.2C.3 8.4 2.2 4 6.3 4c2.4 0 4.1 1.4 5.7 3.4C13.6 5.4 15.3 4 17.7 4c4.1 0 6 4.4 4.3 7.8C19.5 16.4 12 21 12 21z" fill="#E11D2E"/></svg>`,
+  doc:`<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg>`,
+  trend:`<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`,
+  download:`<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M4 21h16"/></svg>`,
+  check:`<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  lock:`<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`,
+  sparkle:`<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z"/></svg>`,
+  seal:(s=30)=>`<svg aria-hidden="true" width="${s}" height="${s}" viewBox="0 0 32 32"><path d="M16 1.5l3.1 2.3 3.8-.4 1.5 3.5 3.5 1.5-.4 3.8 2.3 3.1-2.3 3.1.4 3.8-3.5 1.5-1.5 3.5-3.8-.4L16 30.5l-3.1-2.3-3.8.4-1.5-3.5-3.5-1.5.4-3.8L2.2 16.7l2.3-3.1-.4-3.8 3.5-1.5 1.5-3.5 3.8.4z" fill="#D9B871"/><polyline points="10.5 16.5 14.3 20.2 21.5 12.6" fill="none" stroke="#0B1D3A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  role:{
+    doctor:`<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2.5a4.5 4.5 0 0 0 9 0V13"/><circle cx="19" cy="11" r="2"/></svg>`,
+    physio:`<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="4" r="2"/><path d="M6 21l3.5-6 3 2.5V22"/><path d="M9.5 15l1.5-6 3.5 2.5 3.5 1"/><path d="M11 9L7.5 10.5 6 13.5"/></svg>`,
+    nutrition:`<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7.5c-2-1.8-6.2-1.6-7 2.2-.8 3.8 1.4 9.6 4.3 10.8 1 .4 1.8-.4 2.7-.4s1.7.8 2.7.4c2.9-1.2 5.1-7 4.3-10.8-.8-3.8-5-4-7-2.2z"/><path d="M12 7.5c0-2 1-3.8 3-4.8"/></svg>`,
+    care:`<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 4.8a3.2 3.2 0 0 1 0 6.4"/><path d="M21 20c0-2.6-1.4-4.4-3.6-5.1"/></svg>`
+  }
+};
+const LOGO = `<svg role="img" aria-label="iLive" width="34" height="30" viewBox="0 0 34 30"><path d="M17 27.5 C 7 20 2.5 14.5 2.5 9.2 C 2.5 5.2 5.4 2.5 9.2 2.5 C 12.4 2.5 15 4.4 17 7.4 C 19 4.4 21.6 2.5 24.8 2.5 C 28.6 2.5 31.5 5.2 31.5 9.2 C 31.5 12 30.2 14.8 28 17.6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+
+/* ---------- app state ---------- */
+const S = { range:'24H', summaryRead:false, callMode:'voice', inCall:false, drawer:false };
+const app = document.getElementById('app');
+const go = (h) => { location.hash = h; };
+function toast(msg){ const t=document.createElement('div'); t.className='toast fade'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2000); }
+
+/* ===================== 01 HOME ===================== */
+function Home(){
+  const p = DATA.patient, v = DATA.viewer, fam = DATA.family;
+  const vitals = DATA.vitals.map(v => `
+    <button class="vital press" onclick="go('#vitals/${v.metric}')" aria-label="${v.label} ${v.value} ${v.unit}${v.chip?', '+v.chip:''}. Open trends">
+      <span class="vlabel">${v.label}</span>
+      <span class="row" style="gap:5px;align-items:baseline">
+        <span class="vval" style="color:${v.status==='alert'?'var(--alert)':'var(--text)'}">${v.value}</span>
+        <span class="vunit">${v.unit}</span>${v.metric==='hr'?I.heart:''}
+      </span>
+      <span class="row between" style="gap:4px 6px;width:100%;flex-wrap:wrap">
+        <span class="vtime">${v.time}</span>${v.status!=='none'?`<span class="chip ${v.status}">${v.chip}</span>`:''}
+      </span>
+    </button>`).join('');
+  const rows = DATA.interactions.map(r => `
+    <button class="irow press" onclick="go('#notes/${r.role}')">
+      <span class="tile" style="width:44px;height:44px;border-radius:13px;background:${ROLE[r.role].bg};color:${ROLE[r.role].fg}">${I.role[r.role]}</span>
+      <span style="flex:1;min-width:0"><span class="t" style="display:block">${r.title}</span><span class="s" style="display:block">${r.sub}</span></span>
+      <span class="vn">View notes${I.chev()}</span>
+    </button>`).join('');
+  return `
+  <div class="screen fade">
+    <header class="hdr">
+      <svg class="wave" aria-hidden="true" width="390" height="300" viewBox="0 0 390 300"><path d="M150 300 C 230 250 300 210 390 160 L 390 300 Z" fill="#fff" fill-opacity=".04"/><path d="M220 300 C 280 270 330 240 390 205 L 390 300 Z" fill="#fff" fill-opacity=".04"/></svg>
+      <div class="row between" style="position:relative">
+        <div class="logo">${LOGO}<span>iLive</span></div>
+        <div class="row" style="gap:8px"><button class="iconbtn" aria-label="Open menu" onclick="S.drawer=true;render()">${I.menu}</button></div>
+      </div>
+      <div class="appname" style="position:relative">iLive <span style="color:var(--gold)">Family Connect</span></div>
+      <div class="hello">
+        <span class="av" style="background:${v.initials?'#2563EB':''};border-color:rgba(255,255,255,.5)">${v.initials}</span>
+        <span style="font-size:15px;color:#DCE4F2">Hello, <strong style="color:#fff">${v.name}</strong></span>
+      </div>
+      <h1 class="h1" style="position:relative">Stay connected to your ${v.patientRelation}’s health and care.</h1>
+      <div class="row between" style="gap:12px;margin-top:24px;position:relative">
+        <div style="min-width:0"><div style="font-size:11.5px;font-weight:700;letter-spacing:.12em;color:var(--gold);margin-bottom:3px">YOUR ${v.patientRelation.toUpperCase()}</div><div class="pname">${p.name}</div><div class="pmeta">${p.sex} · Day ${p.day} of monitoring</div></div>
+        <button class="callbox press" aria-label="Call ${v.patientCalled}" onclick="go('#call/parent')">${I.phone(24)}</button>
+      </div>
+      <div class="tags" style="position:relative">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </header>
+    <main class="main">
+      <section class="card row" style="padding:16px;gap:14px">
+        <span class="tile" style="width:52px;height:52px;background:#EAF1FF;color:var(--blue)">${I.pulse}</span>
+        <div style="flex:1;min-width:0"><div class="t17" style="white-space:nowrap">24/7 Live Monitoring</div><div class="sub" style="margin-top:3px">Continuously monitored by iLive doctors and care team</div></div>
+        <span class="active"><span class="dot"></span>Active</span>
+      </section>
+      <section class="card" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+        <div class="row between">
+          <div><div class="t17">Family Circle</div><div class="sub" style="margin-top:2px">Everyone getting updates about ${v.patientCalled}</div></div>
+          <div class="stack">${fam.map(f=>`<span class="av" style="background:${f.color}">${f.initials}</span>`).join('')}</div>
+        </div>
+        ${fam.map(f=>`<div class="row" style="gap:12px;padding-top:10px;border-top:1px solid var(--divider)">
+          <span class="av" style="background:${f.color}">${f.initials}</span>
+          <span style="flex:1;min-width:0"><span style="display:block;font-size:15px;font-weight:700">${f.name}${f.you?' <span style="font-size:12px;font-weight:600;color:var(--muted)">(You)</span>':''}</span>
+          <span style="display:block;font-size:12.5px;color:var(--muted);margin-top:1px">${f.relation} · ${f.status}</span></span>
+          ${f.you?'':`<button class="iconbtn press" aria-label="Call ${f.name}" onclick="go('#call/sibling')" style="color:var(--navy);background:#F2F4F8;border-radius:12px">${I.phone(19)}</button>`}
+        </div>`).join('')}
+        <button class="press" onclick="toast('Invite sent via WhatsApp / SMS — needs ${p.first}’s consent')" style="height:44px;border-radius:12px;border:1.5px dashed #BFD0EE;background:#F7FAFF;color:var(--link);font-size:14px;font-weight:700;cursor:pointer">+ Invite a family member</button>
+      </section>
+      <div class="row between" style="padding:6px 4px 0;align-items:baseline"><h2 class="label">CURRENT READINGS</h2><span style="font-size:12px;color:var(--muted)">Synced ${DATA.syncedAt}</span></div>
+      <div class="grid2">${vitals}<button class="trends press" onclick="go('#vitals/hr')">${I.trend}View all trends</button></div>
+      <button class="dhs press" onclick="go('#summary')" aria-label="Open today's Daily Health Summary">
+        <span class="hero-glow" aria-hidden="true" style="right:-90px;top:-110px"></span>
+        <span class="dhs-seal">${I.seal(34)}</span>
+        <span style="flex:1;min-width:0;position:relative">
+          <span class="eyebrow" style="font-size:10.5px">${I.sparkle} DAILY HEALTH SUMMARY</span>
+          <span style="display:block;font-family:var(--display);font-size:17.5px;font-weight:800;color:#fff;margin-top:3px">Today’s Health Summary</span>
+          <span style="display:block;font-size:12.5px;color:#C7D1E4;margin-top:2px">Reviewed by iLive Medical Team</span>
+          <span style="display:block;font-size:11.5px;color:#9FB0CC;margin-top:1px">Monitored 24/7 · Today, 9:00 AM</span>
+        </span>
+        <span style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;position:relative">
+          ${S.summaryRead?'<span style="font-size:11px;color:#B9C5DB">Read</span>':'<span class="new">NEW</span>'}
+          <span class="dhs-go">${I.chev('#0B1D3A')}</span>
+        </span>
+      </button>
+      <h2 class="label" style="margin:8px 4px 0">LAST INTERACTIONS</h2>
+      <div style="display:flex;flex-direction:column;gap:10px">${rows}</div>
+    </main>
+    <nav class="bar" aria-label="Quick calls">
+      <button class="cta primary press" onclick="go('#call/team')">${I.phone(20,true)}Call iLive Care Team</button>
+      <button class="cta secondary press" onclick="go('#call/parent')">${I.phone(20,true)}Call ${DATA.viewer.patientCalled}</button>
+    </nav>
+    ${S.drawer?Drawer():''}
+  </div>`;
+}
+function Drawer(){
+  return `<div class="drawer-bg" onclick="if(event.target===this){S.drawer=false;render()}"><div class="drawer fade">
+    <div class="row" style="gap:12px;margin-bottom:14px"><span class="av" style="background:#2563EB;width:48px;height:48px;flex-basis:48px">${DATA.viewer.initials}</span>
+      <div><div class="t17">${DATA.viewer.name}</div><div style="font-size:13px;color:var(--muted)">${DATA.viewer.relation} of ${DATA.patient.name}</div></div></div>
+    ${['Family circle & invites','Switch patient (if linked to both parents)','Alerts & notifications','Reports & documents','Devices','Consent & privacy','Help & support','Log out'].map(x=>`<button onclick="toast('${x} — v1 scope')">${x}</button>`).join('')}
+  </div></div>`;
+}
+
+/* ===================== shared sub-header ===================== */
+function SubHdr(title, sub, extra='', right=''){
+  return `<header class="sub-hdr">
+    <div class="row between" style="gap:8px">
+      <div class="row" style="gap:10px"><button class="iconbtn box" aria-label="Back" onclick="go('#home')">${I.back}</button>
+      <div><div style="font-family:var(--display);font-size:19px;font-weight:800">${title}</div><div style="font-size:13px;color:#B9C5DB">${sub}</div></div></div>${right}
+    </div>${extra}</header>`;
+}
+
+/* ===================== 02 VITALS ===================== */
+function Vitals(metric){
+  const m = DATA.vitals.find(v=>v.metric===metric) || DATA.vitals[0];
+  const n = S.range==='24H'?24:S.range==='7D'?7:30, seed = DATA.vitals.indexOf(m)+1;
+  const vals=[]; for(let i=0;i<n;i++) vals.push(m.base + m.amp*Math.sin(i*.62+seed) + m.amp*.35*Math.sin(i*2.1+seed*3));
+  vals[n-1]=m.num;
+  const all = vals.concat(m.lo!=null?[m.lo,m.hi]:[]);
+  let lo=Math.min(...all), hi=Math.max(...all); const pad=(hi-lo)*.12||1; lo-=pad; hi+=pad;
+  const y=v=>150-((v-lo)/(hi-lo))*130, x=i=>8+i*(304/(n-1));
+  const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  const fmt=v=>m.metric==='steps'?Math.round(v).toLocaleString('en-IN'):v.toFixed(m.dec);
+  const avg=vals.reduce((a,b)=>a+b,0)/n;
+  const ticks={'24H':['1 PM yday','7 PM','1 AM','7 AM','Now'],'7D':['02 Nov','04 Nov','06 Nov','07 Nov','Today'],'30D':['10 Oct','17 Oct','24 Oct','31 Oct','Today']}[S.range];
+  const when=k=>S.range==='24H'?(k===0?'01:10 PM · Today':`${k} hr earlier`):(k===0?'Today':k===1?'Yesterday':`${k} days ago`);
+  const unit = m.metric==='sleep'?'hours':m.unit==='today'?'steps':m.unit;
+  const pills = DATA.vitals.map(v=>`<button class="pill ${v.metric===m.metric?'on':''}" role="tab" aria-selected="${v.metric===m.metric}" onclick="go('#vitals/${v.metric}')">${v.short}</button>`).join('');
+  return `<div class="screen fade" style="padding-bottom:24px">
+    ${SubHdr('Vitals &amp; Trends', `${DATA.patient.name} · your ${DATA.viewer.patientRelation} · Day ${DATA.patient.day}`, `<div class="pills" role="tablist">${pills}</div>`)}
+    <main class="main">
+      <section class="card" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+        <div class="row between" style="align-items:flex-start">
+          <div><span class="sec-h">${m.label.replace('LAST ','')}</span>
+            <div class="row" style="gap:6px;align-items:baseline;margin-top:4px"><span class="vval" style="font-size:40px;color:${m.status==='alert'?'var(--alert)':'var(--text)'}">${m.value}</span><span style="font-size:15px;color:#556178">${unit}</span></div>
+            <span style="font-size:12.5px;color:var(--muted)">Last reading ${m.time}</span></div>
+          ${m.status!=='none'?`<span class="chip lg ${m.status}">${m.chip}</span>`:''}
+        </div>
+        <div class="seg" style="grid-template-columns:repeat(3,1fr)">${['24H','7D','30D'].map(r=>`<button class="${r===S.range?'on':''}" onclick="S.range='${r}';render()">${r}</button>`).join('')}</div>
+        <svg role="img" aria-label="${m.short} trend ${S.range}" width="100%" height="170" viewBox="0 0 320 170" preserveAspectRatio="none">
+          ${m.lo!=null?`<rect x="0" y="${y(m.hi).toFixed(1)}" width="320" height="${(y(m.lo)-y(m.hi)).toFixed(1)}" fill="#16A34A" fill-opacity=".07"/>`:''}
+          <line x1="0" y1="20" x2="320" y2="20" stroke="#E6EAF1"/><line x1="0" y1="85" x2="320" y2="85" stroke="#E6EAF1"/><line x1="0" y1="150" x2="320" y2="150" stroke="#D5DCE8"/>
+          <path d="M${x(0).toFixed(1)},150 L${pts.join(' L')} L${x(n-1).toFixed(1)},150 Z" fill="#2563EB" fill-opacity=".08"/>
+          <polyline points="${pts.join(' ')}" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="${x(n-1).toFixed(1)}" cy="${y(vals[n-1]).toFixed(1)}" r="5.5" fill="#fff" stroke="#2563EB" stroke-width="2.6"/>
+        </svg>
+        <div class="row between" style="font-size:11.5px;color:var(--muted);margin-top:-6px">${ticks.map(t=>`<span>${t}</span>`).join('')}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div class="stat"><span>MIN</span><b>${fmt(Math.min(...vals))}</b></div>
+          <div class="stat"><span>AVERAGE</span><b>${fmt(avg)}</b></div>
+          <div class="stat"><span>MAX</span><b>${fmt(Math.max(...vals))}</b></div>
+        </div>
+        <div class="row" style="gap:8px;font-size:12.5px;color:#3F4A5F;background:#F0FAF3;border-radius:10px;padding:9px 11px">
+          <span style="width:10px;height:10px;border-radius:3px;background:rgba(22,163,74,.35)"></span>
+          <span>${m.lo!=null?`Care-team target range: ${m.lo}–${m.hi} ${unit} (set per patient)`:'No target range set for this metric'}</span>
+        </div>
+      </section>
+      <section class="card" style="padding:6px 16px">
+        <h2 class="label" style="margin:10px 0 4px">RECENT READINGS</h2>
+        ${[0,1,2,3].map(k=>`<div class="li"><span style="font-size:13.5px;color:#3F4A5F">${when(k)}</span><b style="font-size:15px">${k===0?m.value:fmt(vals[n-1-k])} ${m.metric==='steps'?'':unit}</b></div>`).join('')}
+      </section>
+      <p style="margin:0 4px;font-size:11.5px;line-height:1.45;color:var(--muted)">Prototype shows sample trend data. Production: GET /v1/patients/{id}/vitals/{metric}?range=24h|7d|30d</p>
+    </main></div>`;
+}
+
+/* ===================== 03 DAILY HEALTH SUMMARY =====================
+   Content = today's vitals + a short plain-language summary + medical-team review.
+   No care plan / medication list (by design). */
+function Summary(){
+  const v=DATA.viewer, p=DATA.patient, fam=DATA.family;
+  const watch = DATA.vitals.filter(x=>x.status==='alert'||x.status==='watch'||x.status==='stale').length;
+  const unit = x => x.metric==='sleep'?'':x.unit==='today'?'steps':x.unit;
+  const rows = DATA.vitals.map(x=>`
+    <button class="vrow press" onclick="go('#vitals/${x.metric}')">
+      <i class="sd ${x.status}" style="width:9px;height:9px"></i>
+      <span style="flex:1;min-width:0;text-align:left"><span style="display:block;font-size:14.5px;font-weight:600">${x.short==='BP'?'Blood pressure':x.short}</span><span style="display:block;font-size:12px;color:var(--muted);margin-top:1px">${x.time}</span></span>
+      <span style="text-align:right"><span style="display:block;font-family:var(--display);font-size:17px;font-weight:800;color:${x.status==='alert'?'var(--alert)':'var(--text)'}">${x.value} <span style="font-family:var(--sans);font-size:12px;font-weight:500;color:var(--muted)">${unit(x)}</span></span>
+      ${x.status!=='none'?`<span class="chip ${x.status}" style="display:inline-block;margin-top:3px">${x.chip}</span>`:`<span style="display:block;font-size:11.5px;color:var(--ok-fg);font-weight:600;margin-top:3px">Recorded</span>`}</span>
+    </button>`).join('');
+  return `<div class="screen fade" style="padding-bottom:28px">
+    <header class="sum-hdr">
+      <span class="hero-glow" aria-hidden="true" style="opacity:.9"></span>
+      <div class="row between" style="position:relative"><button class="iconbtn box" aria-label="Back" onclick="go('#home')">${I.back}</button>
+      <button class="iconbtn box" style="width:auto;padding:0 14px;gap:8px;font-size:13.5px;font-weight:600" onclick="toast('Report saved as PDF')">${I.download}PDF</button></div>
+      <div style="position:relative;margin-top:18px">
+        <span class="eyebrow">${I.sparkle} DAILY HEALTH SUMMARY</span>
+        <h1 style="margin:8px 0 6px;font-family:var(--display);font-size:27px;line-height:1.15;font-weight:800;letter-spacing:-.4px">${p.name}</h1>
+        <span style="font-size:13.5px;color:#B9C5DB">Your ${v.patientRelation} · Sunday, 08 Nov 2026 · 9:00 AM</span>
+      </div>
+      <div class="review-band">
+        <span style="flex:0 0 38px;display:flex">${I.seal(38)}</span>
+        <div style="flex:1"><div style="font-size:14.5px;font-weight:700">Reviewed by the iLive Medical Team</div>
+        <div style="font-size:12.5px;color:#DCE4F2;margin-top:2px">Monitored 24/7 · Day ${p.day} of care</div></div>
+      </div>
+    </header>
+
+    <main class="main" style="margin-top:4px">
+      <section class="card" style="padding:18px">
+        <div class="row between"><span class="label">TODAY IN BRIEF</span><span class="chip lg watch">${watch} to keep an eye on</span></div>
+        <p class="brief">${p.first}’s heart rate was <b>100 bpm</b> at 1:10 PM, at the top of his target range. Blood sugar was <b>144 mg/dL</b>, slightly above target, and he slept <b>5 hours 5 minutes</b> — less than we would like.</p>
+        <p class="brief" style="margin-top:10px">His last blood pressure, <b>118/74</b>, was normal, but it was taken 12 days ago, so we have asked for a fresh reading today.</p>
+      </section>
+
+      <section class="card" style="padding:6px 16px 6px">
+        <div class="row between" style="padding:12px 0 6px"><span class="label">TODAY’S VITALS</span><span style="font-size:12px;color:var(--muted)">Tap for trends</span></div>
+        ${rows}
+      </section>
+
+      <section class="reassure">
+        <div class="row" style="gap:12px;align-items:flex-start">
+          <span style="flex:0 0 44px;display:flex">${I.seal(44)}</span>
+          <div>
+            <div style="font-family:var(--display);font-size:17px;font-weight:800;color:#3B2E10">We’re keeping a close watch on ${v.patientCalled}</div>
+            <p style="margin:6px 0 0;font-size:14px;line-height:1.55;color:#4A3F25">The iLive Medical Team has reviewed today’s readings. Our doctors and care team are monitoring ${p.first} around the clock and will call you straight away if anything needs attention.</p>
+          </div>
+        </div>
+        <div class="sig">
+          <span>Reviewed by <b>iLive Medical Team</b></span><span>08 Nov 2026 · 9:00 AM</span>
+        </div>
+      </section>
+
+      <div class="row" style="gap:8px;padding:0 4px">
+        <span class="stack">${fam.filter(f=>!f.you||S.summaryRead).map(f=>`<span class="av" style="background:${f.color};width:26px;height:26px;flex-basis:26px;font-size:10px">${f.initials}</span>`).join('')}</span>
+        <span style="font-size:12.5px;color:var(--muted)">Seen by ${S.summaryRead?'you and Arun':'Arun at 9:14 AM'}</span>
+      </div>
+
+      ${S.summaryRead
+        ? `<div class="cta ok">${I.check}Marked as read · Arun and the team can see this</div>`
+        : `<button class="cta primary press" onclick="S.summaryRead=true;render();toast('Marked as read')">Mark as read</button>`}
+      <button class="cta secondary press" onclick="go('#call/team')">Talk to the medical team</button>
+    </main></div>`;
+}
+
+/* ===================== 04 NOTES ===================== */
+function Notes(role){
+  const key = ROLE[role]?role:'doctor', r=ROLE[key], it=DATA.interactions.find(x=>x.role===key);
+  const tabs = Object.keys(ROLE).map(k=>`<button class="${k===key?'on':''}" role="tab" aria-selected="${k===key}" onclick="go('#notes/${k}')">${ROLE[k].short}</button>`).join('');
+  return `<div class="screen fade" style="padding-bottom:24px">
+    ${SubHdr('Care Team Notes', `${DATA.patient.name} · shared with family circle`, `<div class="seg dark" role="tablist" style="grid-template-columns:repeat(4,1fr)">${tabs}</div>`)}
+    <main class="main">
+      <section class="card row" style="padding:16px;gap:12px">
+        <span class="tile" style="width:52px;height:52px;background:${r.bg};color:${r.fg};font-family:var(--display);font-weight:800;font-size:17px">${r.initials}</span>
+        <div><div class="t17">${it.title}</div><div style="font-size:13px;color:var(--muted)">${it.sub}</div><div style="font-size:12.5px;color:var(--muted)">Clinician: [Name, credentials]</div></div>
+      </section>
+      <section class="card" style="padding:6px 16px 12px">
+        ${r.sections.map(([h,b])=>`<div style="padding:12px 0;border-bottom:1px solid var(--divider)"><div class="sec-h">${h}</div><div style="font-size:14.5px;line-height:1.5;color:var(--body);margin-top:5px">${b}</div></div>`).join('')}
+        <div class="row" style="gap:8px;padding-top:12px;font-size:12.5px;color:var(--muted)">${I.lock}Shared with ${DATA.patient.first}’s consent · visible to Shalin and Arun</div>
+      </section>
+      <h2 class="label" style="margin:4px 4px 0">EARLIER NOTES</h2>
+      <section class="card" style="padding:0 16px">
+        <div class="row between" style="min-height:52px;border-bottom:1px solid var(--divider)"><span style="font-size:14px">[Earlier date] · Follow-up call</span>${I.chev('#3F4A5F')}</div>
+        <div class="row between" style="min-height:52px"><span style="font-size:14px">[Earlier date] · Initial consultation</span>${I.chev('#3F4A5F')}</div>
+      </section>
+      <button class="cta primary press" onclick="S.callMode='callback';go('#call/team')">${I.phone(19,true)}Request a call back</button>
+    </main></div>`;
+}
+
+/* ===================== 05 CALL ===================== */
+function Call(who){
+  const P = { team:{name:'iLive Care Team',sub:'Doctors and nurses on duty, round the clock',initials:'iL',c:'#2563EB'},
+              parent:{name:DATA.patient.name,sub:'Your father · +91 [phone number]',initials:'PK',c:'#5B48D6'},
+              sibling:{name:'Arun Khanna',sub:'Your brother · also in the family circle',initials:'AK',c:'#0F766E'} };
+  const w = P[who]?who:'team', t=P[w];
+  const cta = S.callMode==='callback'?'Request call back':S.callMode==='video'?'Start video call':'Start voice call';
+  if(S.inCall) return `<div class="callscr fade" style="align-items:center;text-align:center;padding:80px 24px 48px;gap:14px">
+      <div style="width:132px;height:132px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;animation:pulse 1.6s infinite">
+        <div style="width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:30px;font-weight:800">${t.initials}</div></div>
+      <div style="font-family:var(--display);font-size:24px;font-weight:800;margin-top:10px">${t.name}</div>
+      <div style="font-size:15px;color:#B9C5DB">${S.callMode==='callback'?'Call back requested — we will ring you shortly':'Connecting '+(S.callMode==='video'?'video':'voice')+' call…'}</div>
+      <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px">
+        <button aria-label="End" onclick="S.inCall=false;render()" style="width:72px;height:72px;border-radius:50%;border:0;background:#E5484D;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="transform:rotate(135deg);display:flex">${I.phone(30,true)}</span></button>
+        <span style="font-size:13px;color:#DCE4F2">${S.callMode==='callback'?'Cancel request':'End call'}</span>
+      </div></div>`;
+  return `<div class="callscr fade">
+    <div class="row between" style="padding:calc(env(safe-area-inset-top) + 18px) 16px 0">
+      <button class="iconbtn box" aria-label="Close" onclick="S.callMode='voice';go('#home')">${I.close}</button>
+      <span class="row" style="gap:6px;font-size:12.5px;font-weight:600;color:#DCE4F2"><span style="width:8px;height:8px;border-radius:50%;background:#22C55E"></span>Care team available 24/7</span>
+    </div>
+    <div style="display:flex;flex-direction:column;flex:1;padding:22px 16px calc(env(safe-area-inset-bottom) + 24px);gap:18px">
+      <h1 style="margin:0;font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-.3px">Who would you like to call?</h1>
+      <div role="radiogroup" style="display:flex;flex-direction:column;gap:10px">
+        ${Object.keys(P).map(k=>`<button role="radio" aria-checked="${k===w}" class="who ${k===w?'on':''}" onclick="go('#call/${k}')">
+          <span class="tile" style="width:48px;height:48px;border-radius:15px;background:${P[k].c};font-weight:800;font-size:16px">${P[k].initials}</span>
+          <span style="flex:1"><span style="display:block;font-size:16px;font-weight:700">${P[k].name}</span><span style="display:block;font-size:13px;opacity:.8;margin-top:2px">${P[k].sub}</span></span>
+          <span class="radio"></span></button>`).join('')}
+      </div>
+      <div style="background:#fff;color:var(--navy);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px;margin-top:auto">
+        <span class="sec-h" style="font-size:12px">HOW TO CONNECT</span>
+        <div role="radiogroup" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          ${[['voice','Voice'],['video','Video'],['callback','Call me back']].map(([k,l])=>`<button role="radio" aria-checked="${k===S.callMode}" class="mode ${k===S.callMode?'on':''}" onclick="S.callMode='${k}';render()">${l}</button>`).join('')}
+        </div>
+        <button class="cta primary press" onclick="S.inCall=true;render()">${I.phone(19,true)}${cta}</button>
+        <span style="font-size:12px;line-height:1.45;color:var(--muted);text-align:center">In a medical emergency, call 112 first. The iLive care team will be alerted automatically.</span>
+      </div>
+    </div></div>`;
+}
+
+/* ===================== router ===================== */
+function render(){
+  const [route,param] = (location.hash.replace('#','')||'home').split('/');
+  if(route!=='call') S.inCall=false;
+  if(route!=='home') S.drawer=false;
+  app.innerHTML = route==='vitals'?Vitals(param):route==='summary'?Summary():route==='notes'?Notes(param):route==='call'?Call(param):Home();
+}
+window.addEventListener('hashchange',()=>{render();window.scrollTo(0,0);});
+render();
+</script>
+</body>
+</html>
